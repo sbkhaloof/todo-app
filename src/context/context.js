@@ -1,13 +1,20 @@
-import React from "react"
-export const settingsContext=React.createContext();
-export default function settingsProvider(props){
-    const state={
-        Display:true,
-        itemsNumber:3,
-        defaultSortField:'you should do your work'
+import React from 'react';
+
+export const SettingsContext = React.createContext();
+
+export default function SettingsProvider(props) {
+    const state = {
+        showCompleted,
+        setshowCompleted,
+        perPage,
+        setperPage
     }
-    return(<settingsContext.Provider value={state}>
-        {props.children}
-    </settingsContext.Provider>
+
+   
+
+    return (
+        <SettingsContext.Provider value={state}>
+            {props.children}
+        </SettingsContext.Provider>
     )
 }
