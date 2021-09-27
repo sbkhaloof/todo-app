@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 //import useForm from '../../hooks/form.js';  // i used it in form component 
 
 import { v4 as uuid } from 'uuid';
-import { Card,Button, Elevation } from "@blueprintjs/core";
 
 // import my component 
 import Header from '../header';
 import Form from '../form';
 import Footer from '../footer';
+import List from './list';
 
 
 const ToDo = () => {
@@ -56,9 +56,9 @@ const ToDo = () => {
     <>
       <Header incomplete={incomplete} />
       <Form addItem={addItem} />
+     <List list={list} toggleComplete={toggleComplete} deleteItem={deleteItem}/>
      
-     
-      {list.map(item => (
+      {/* {list.map(item => (
         <div key={item.id}>
           <Card elevation={Elevation.FOUR} style={{width:"500px",alignItems:"center"}}>
 
@@ -72,7 +72,7 @@ const ToDo = () => {
           <hr />
           </Card>
         </div>
-      ))} 
+      ))}  */}
       <Footer/>
 
     </>
