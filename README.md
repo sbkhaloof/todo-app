@@ -16,4 +16,4 @@ PR:
 Deployed link :
 
 [sandbox1](https://d26wn.csb.app/)
-[sandbox2]()
+[sandbox2](https://74utw.csb.app/form)
