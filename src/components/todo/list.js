@@ -1,14 +1,14 @@
 import React, { useContext, useState } from "react";
-import { SettingsContext } from "../../context";
+import { SettingsContext } from "../../context/context";
 import { Card, Button, Elevation } from "@blueprintjs/core";
 
 import ReactPaginate from 'react-paginate';// i used it for Pagination note 
-
-
+// lab33
+import Auth from '../auth';
 // declear list As a functional component 
 export default function List(props) {
     // to access context by useContext
-     console.log(SettingsContext, '+++++++++++++++++++++++++');
+    console.log(SettingsContext, '+++++++++++++++++++++++++');
     const settingsContext = useContext(SettingsContext);
     console.log(settingsContext, '>>>>>>>>>>>>>>...');
     // declear ststs
@@ -22,13 +22,16 @@ export default function List(props) {
         .slice(visitedPages, visitedPages + numOfUserPerPage).map((item) => {
             return (
                 <div key={item.id}>
-                    <Card elevation={Elevation.THREE} style={{width:"600px"}}>
+                    <Card elevation={Elevation.THREE} style={{ width: "600px" }}>
                         <p>Item Details : {item.text}</p>
                         <p><small>Assigned to: {item.assignee}</small></p>
                         <p><small>Difficulty: {item.difficulty}</small></p>
-                        <Button onClick={() => props.toggleComplete(item.id)}>Complete: {item.complete.toString()}</Button>
-                        <Button onClick={() => props.deleteItem(item.id)}> ❌ </Button>
-
+                        <Auth capability="update">
+                            <Button onClick={() => props.toggleComplete(item.id)}>Complete: {item.complete.toString()}</Button>
+                        </Auth>
+                        <Auth capability="delete">
+                            <Button onClick={() => props.deleteItem(item.id)}> ❌ </Button>
+                        </Auth>
                         <hr />
 
                     </Card>
@@ -44,7 +47,7 @@ export default function List(props) {
         <>
             {display}
 
-            <ReactPaginate 
+            <ReactPaginate
                 previousLabel={'previous'}
                 nextLabel={'next'}
                 // breakLabel={'...'}

@@ -1,7 +1,6 @@
-import React from 'react';
-import SettingsContext from './context'
-import ToDo from './components/todo/todo.js';
-
+import React, { useContext } from 'react';
+import SettingsContext from './context/context';
+import { LoginContext } from './context/loginContext';
 
 // for lab 32
 import Header from './components/header';
@@ -14,26 +13,42 @@ import {
   Link
 } from "react-router-dom";
 
+// for lab 33
+import LoginProvider from "./context/loginContext"
+import Auth from './components/auth';
+import ToDo from './components/todo/todo.js';
+import { If, Else, Then } from "react-if";
+import Login from "./components/login";
+
+
 export default class App extends React.Component {
   render() {
     return (
-      <Router>
-        <Switch>
-          <SettingsContext>
-            <Route exact path="/">
 
-              {/* <Header /> */}
-              <ToDo />
-              {/* <Footer /> */}
+      <SettingsContext>
+        <LoginProvider>
+          <Login />
+          <Router>
+            <Header />
+            <Switch>
+              <Route exact path="/">
+              <Auth capability="read">
+                <ToDo />
+            </Auth >
+              </Route>
+              <Route exact path="/form">
+            <Header />
+            <FormSettingPage />
+            <Footer />
             </Route>
-            <Route path="/form">
-              <Header />
-              <FormSettingPage />
-              <Footer />
-            </Route>
-          </SettingsContext>
-        </Switch>
-      </Router>
+            </Switch>
+          </Router>
+
+         
+          
+        </LoginProvider>
+      </SettingsContext>
+
     );
   }
 }
