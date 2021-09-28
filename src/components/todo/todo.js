@@ -9,6 +9,9 @@ import Form from '../form';
 import Footer from '../footer';
 import List from './list';
 
+// lab33
+
+import Auth from "../auth";
 
 const ToDo = () => {
 
@@ -55,8 +58,12 @@ const ToDo = () => {
   return (
     <>
       <Header incomplete={incomplete} />
+      <Auth capability="read">
       <Form addItem={addItem} />
-     <List list={list} toggleComplete={toggleComplete} deleteItem={deleteItem}/>
+      <List list={list} toggleComplete={toggleComplete} deleteItem={deleteItem}/>
+      </Auth>
+     
+    
      
       {/* {list.map(item => (
         <div key={item.id}>
