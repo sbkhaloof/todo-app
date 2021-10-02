@@ -1,3 +1,23 @@
+import React,{useContext} from 'react';
+import { When } from 'react-if';
+
+import { LoginContext } from '../context/loginContext';
+
+export default function Auth(props) {
+
+  const context= useContext(LoginContext);
+  
+ const isLoggedIn=context.loggedIn;
+ const canDo=props.capability ? context.can(props.capability) : true;
+ const okToRender = isLoggedIn && canDo;
+ return (
+  <When condition={okToRender}>
+  {props.children}
+</When>
+ );
+
+}
+
 // this code from starter code class 33
 /**
  Create an <Auth /> component with the following features:
@@ -11,25 +31,3 @@
 - Logged In Users with ‘create’ permissions can create new items.
 - Logged In Users with ‘delete’ permissions can delete items.
  */
-
-import React,{useContext} from 'react';
-import { When } from 'react-if';
-
-import { LoginContext } from '../context/loginContext';
-
-export default function Auth(props) {
-
-  const context= useContext(LoginContext);
-  const canDo=context.can(props.capability);
-
-
- 
-
-    return (
-      <When condition={context.loggedIn && canDo}>
-        {props.children}
-      </When>
-    );
-  
-}
-

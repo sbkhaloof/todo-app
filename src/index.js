@@ -3,20 +3,24 @@ import ReactDOM from 'react-dom';
 
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
-// lab  33 
-import LoginProvider from './context/loginContext';
 
 import App from './app.js';
+import LoginProvider from './context/loginContext.js';
+import  SettingsProvider from './context/context'
 
 class Main extends React.Component {
+  // using login provider 
   render() {
 
     return (
-     
+      <LoginProvider>
+        <SettingsProvider>
         <App />
+        </SettingsProvider>
+      </LoginProvider>
      
     )
-
+  
   }
 }
 

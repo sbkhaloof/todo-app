@@ -1,89 +1,165 @@
-import React, { useEffect, useState } from 'react';
-//import useForm from '../../hooks/form.js';  // i used it in form component 
-
+import React, { useEffect, useState, useContext } from 'react';
+import useForm from '../../hooks/form.js';
 import { v4 as uuid } from 'uuid';
 
-// import my component 
-import Header from '../header';
+// import for the components
 import Form from '../form';
-import Footer from '../footer';
-import List from './list';
+import List from '../todo/list';
+import { SettingsContext } from '../../context/context';
+import  { LoginContext } from '../../context/loginContext';
+import { When } from 'react-if';
+import Auth from '../auth';
 
-// lab33
 
-import Auth from "../auth";
 
 const ToDo = () => {
 
-  const [list, setList] = useState([]);
-  const [incomplete, setIncomplete] = useState([]);
-  // const { handleChange, handleSubmit } = useForm(addItem); i used it in form component 
 
-  function addItem(item) {
-    console.log(item);
-    let data = {
-      id: uuid(),
-      text: item.text,
-      assignee: item.assignee,
-      complete: false,
-      difficulty: item.difficulty
+    // useEffect(() => {
+    //     let data = localStorage.getItem('logout');
+    //     let listData = JSON.parse(data);
+    // console.log('from to do' , listData);
+    //     let parsedData = JSON.stringify(listData);
+    //     localStorage.setItem('list' , parsedData);
+    // }, []);
+
+    const login = useContext(LoginContext);
+    const settings = useContext(SettingsContext);
+
+
+    const [list, setList] = useState([]);
+
+
+    const [incomplete, setIncomplete] = useState([]);
+    const { handleChange, handleSubmit } = useForm(addItem);
+    // const  handleChange   = addItem();
+    // const  handleSubmit   = addItem();
+
+
+    const [startPage, setStartPage] = useState(0);
+    const [endPage, setEndPage] = useState(settings.numberOfItems);
+
+    function addItem(item) {
+        if (!item.difficulty) { item.difficulty = 5 }
+
+        let todo = {
+            id: uuid(),
+            complete: false,
+            assignee: item.assignee,
+            todo: item.todo,
+            difficulty: item.difficulty
+
+        }
+        // item.id = uuid();
+        // item.complete = false;
+
+        // console.log("item -------> ",item);
+        //  console.log("Id -------> ",item.id);
+
+        setList([...list, todo]);
     }
-    setList([...list, data]);
-  }
 
-  function deleteItem(id) {
-    const items = list.filter(item => item.id !== id);
-    setList(items);
-  }
+    useEffect(() => {
+        addItemToLocalStorage(list);
+    }, [list]);
 
-  function toggleComplete(id) {
+    function addItemToLocalStorage(list) {
+        let data = JSON.stringify(list);
+        localStorage.setItem('list', data);
+    }
 
-    const items = list.map(item => {
-      if (item.id == id) {
-        item.complete = !item.complete;
-      }
-      return item;
-    });
+    function deleteItem(id) {
+        const items = list.filter(item => item.id !== id);
+        setList(items);
+    }
 
-    setList(items);
+    function toggleComplete(id) {
 
-  }
+        const items = list.map(item => {
+            if (item.id == id) {
+                item.complete = !item.complete;
+            }
+            return item;
+        });
 
-  useEffect(() => {
-    let incompleteCount = list.filter(item => !item.complete).length;
-    setIncomplete(incompleteCount);
-    document.title = `To Do List: ${incomplete}`;
-  }, [list]);
+        setList(items);
 
-  return (
-    <>
-      <Header incomplete={incomplete} />
-      <Auth capability="read">
-      <Form addItem={addItem} />
-      <List list={list} toggleComplete={toggleComplete} deleteItem={deleteItem}/>
-      </Auth>
-     
+    }
+
+    useEffect(() => {
+        let incompleteCount = list.filter(item => !item.complete).length;
+        setIncomplete(incompleteCount);
+        document.title = `To Do List: ${incompleteCount}`;
+    }, [list]);
+
+
+
+    const [result, setResult] = useState([]);
     
-     
-      {/* {list.map(item => (
-        <div key={item.id}>
-          <Card elevation={Elevation.FOUR} style={{width:"500px",alignItems:"center"}}>
+    useEffect(() => {  let data2 = localStorage.getItem('logout');
+    let listData2 = JSON.parse(data2);
+    if (listData2) {
+        let data = JSON.stringify(listData2);
+        localStorage.setItem('list', data);
 
-          <p>Item Details : {item.text}</p>
-          <p><small>Assigned to: {item.assignee}</small></p>
-          <p><small>Difficulty: {item.difficulty}</small></p>
-          <Button onClick={() => toggleComplete(item.id)}>Complete: {item.complete.toString()}</Button>
-          <Button onClick={() => deleteItem(item.id)}> ❌ </Button>
-          <Button onClick={() => addItem(item)}>📃Add Item </Button>
-          
-          <hr />
-          </Card>
-        </div>
-      ))}  */}
-      <Footer/>
+        setList([...listData2])
+    }},[]);
+  
+    useEffect(() => {
 
-    </>
-  );
+
+        let data1 = localStorage.getItem('list');
+        let listData = JSON.parse(data1);
+
+        // setList([...list , listData]);
+
+
+        let resultData = list.slice(startPage, endPage);
+        setResult(resultData)
+    }, [list]);
+
+
+    function pagination() {
+        // let data = localStorage.getItem('list');
+        // let listData = JSON.parse(data)||[] ;
+        // let result = listData.slice(startPage, endPage);
+
+        return result;
+    }
+
+    function next() {
+        setStartPage(startPage + settings.numberOfItems);
+        setEndPage(endPage + settings.numberOfItems);
+    }
+    function previous() {
+        setEndPage(endPage - settings.numberOfItems);
+        setStartPage(startPage - settings.numberOfItems);
+    }
+    return (
+        <>
+            <h1>To Do : {incomplete} items pending</h1>
+
+            <When condition={login.loggedIn}>
+                <Auth capability={"create"}>
+                    <Form
+                        handleSubmit={handleSubmit}
+                        handleChange={handleChange}
+                    />
+                </Auth>
+
+                <List
+                    pagination={pagination}
+                    next={next}
+                    previous={previous}
+                    toggleComplete={toggleComplete}
+                    deleteItem={deleteItem}
+                />
+
+            </When>
+
+        </>
+    );
 };
+
 
 export default ToDo;

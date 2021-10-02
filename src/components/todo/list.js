@@ -1,67 +1,69 @@
-import React, { useContext, useState } from "react";
-import { SettingsContext } from "../../context/context";
-import { Card, Button, Elevation } from "@blueprintjs/core";
+   
+import React, { useEffect, useState } from 'react';
+import { Button, Card, Elevation } from '@blueprintjs/core';
+import Auth from '../auth'
+import { When } from 'react-if';
+function List(props) {
+    const [data, setData] = useState([]);
+    useEffect(() => {
+        getItemToLocalStorage();
+    }, []);
 
-import ReactPaginate from 'react-paginate';// i used it for Pagination note 
-// lab33
-import Auth from '../auth';
-// declear list As a functional component 
-export default function List(props) {
-    // to access context by useContext
-    console.log(SettingsContext, '+++++++++++++++++++++++++');
-    const settingsContext = useContext(SettingsContext);
-    console.log(settingsContext, '>>>>>>>>>>>>>>...');
-    // declear ststs
-    const [pageNumber, setPageNumber] = useState(0);
+    function getItemToLocalStorage() {
+        let data = localStorage.getItem('list');
+        let listData = JSON.parse(data);
+        setData(listData);
+    }
 
-    const numOfUserPerPage = settingsContext.numberOfItems;
-    console.log(numOfUserPerPage);
-    const visitedPages = pageNumber * numOfUserPerPage;
-
-    const display = props.list
-        .slice(visitedPages, visitedPages + numOfUserPerPage).map((item) => {
-            return (
-                <div key={item.id}>
-                    <Card elevation={Elevation.THREE} style={{ width: "600px" }}>
-                        <p>Item Details : {item.text}</p>
-                        <p><small>Assigned to: {item.assignee}</small></p>
-                        <p><small>Difficulty: {item.difficulty}</small></p>
-                        <Auth capability="update">
-                            <Button onClick={() => props.toggleComplete(item.id)}>Complete: {item.complete.toString()}</Button>
-                        </Auth>
-                        <Auth capability="delete">
-                            <Button onClick={() => props.deleteItem(item.id)}> ❌ </Button>
-                        </Auth>
-                        <hr />
-
-                    </Card>
-                </div>
-            )
-        });
-    const numberOfPage = Math.ceil(props.list.length / numOfUserPerPage);
-    const changePage = ({ selected }) => {
-        setPageNumber(selected);
-    };
-    // the paginate code from https://github.com/AdeleD/react-paginate/blob/master/demo/js/demo.js
+// map through list to show the card 
+// delete button for admin who can delete and the card will be show for all users 
     return (
-        <>
-            {display}
+        <div className="list">
+            <Card elevation={Elevation.THREE} style={{width:'400px',marginInlineStart:'700px'}}>
+                <Auth capability={'read'}>
+                   
+                            {
+                                 props.pagination().map((item, idx) => (
+                                    <div key={item.id}>
+                                        <p className={item.complete.toString()}>{item.complete == false ? "Pending" : "Complete"}</p>
+                                        <p>To Do : {item.todo}</p>
+                                        <p><small>Assigned to: {item.assignee}</small></p>
+                                        <p><small>Difficulty: {item.difficulty}</small></p>
 
-            <ReactPaginate
-                previousLabel={'previous'}
-                nextLabel={'next'}
-                // breakLabel={'...'}
-                // breakClassName={'break-me'}
-                pageCount={numberOfPage}
-                // marginPagesDisplayed={2}
-                // pageRangeDisplayed={5}
-                onPageChange={changePage}
-                containerClassName={'pagination'}
-                activeClassName={'active'}
-            />
+                                        {
+                                            (!item.complete)
+                                                ? (
+                                                    <Button onClick={() => props.toggleComplete(item.id)}>{item.complete == false ? "Pending" : "Complete"}</Button>)
+                                                : (
+                                                    <>
+                                                        <Button onClick={() => props.toggleComplete(item.id)}>{item.complete == false ? "Pending" : "Complete"}</Button>                                        <br></br>
+                                                        <Auth capability={'delete'}>
+                                                            <Button onClick={() => props.deleteItem(item.id)}>Delete </Button>
+                                                        </Auth>
+                                                    </>
+                                                )
+                                        }
+                                        <hr />
+                                        <br/>
+                                    </div>
+                                ))
+                            
+                                    }
+                    
 
 
-        </>
-    )
+                    <Button onClick={props.previous}>Previous</Button>
+       
+            <Button onClick={props.next}>Next</Button>
 
-}
+                </Auth>
+
+            </Card>
+
+
+           
+        </div>
+    );
+};
+
+export default List;
