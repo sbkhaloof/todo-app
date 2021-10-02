@@ -11,17 +11,16 @@ Implement a <Login /> Component that has the following features:
 
 import React, { useContext, useState } from 'react';
 import { When } from 'react-if';
+import useForm from '../hooks/form';
 import { LoginContext } from '../context/loginContext';
+import { Button, FormGroup, Menu, MenuItem } from '@blueprintjs/core';
 
-export default function Login(props) {
+export default function Login() {
 
-  const context = useContext(LoginContext);
-  // declear state for login
-  const [username, setUsenane] = useState("");
-  const [password, setPassword] = useState("")
+  const login = useContext(LoginContext);
+  const { handleChange, handleSubmit } = useForm(handleLogin);
 
-
-  // declear state for signup 
+  // declear state for signup ............ i will do it later 
 
   // const [user_name, setuser_name] = useState("")
   // const [user_password, setuser_password] = useState("")
@@ -32,32 +31,23 @@ export default function Login(props) {
 
   // const [singupShow, setSingupShow] = useState(true);
 
-
-  // create handle submit function for the form
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    context.login(username, password);
+  function handleLogin(user) {
+    login.login(user.username, user.password)
   }
-  // const handlesignup=(e)=>{
-  //   e.preventDefault();
-  //   context.signup(user_name,user_password,user_phone,user_address,user_gender,user_role)
-  // }
-
+// login form input username and password to see our home and setting page 
   return (
     <>
-      {/* {singupShow ?} */}
-      <When condition={!context.loggedIn}>
-        <form onSubmit={handleSubmit}>
-          <input type="text" name="username" onChange={(e) => { setUsenane(e.target.value) }}>USER name</input>
-          <input type="password" name="password" onChange={(e) => { setPassword(e.target.value) }}>password</input>
-          <button type="submit">LOGIN </button>
-        </form>
-      </When>
-      <When condition={context.loggedIn}>
-        {/* <button type="button" onClick={setSingupShow(false)}> signup</button>
-<span>this is to show user name </span> */}
-      </When>
-    </>
-  );
-}
 
+      <form onSubmit={handleSubmit} style={{width:'200px' ,height:'200px',backgroundColor:'Highlight',margin:'20px'}}>
+
+        <h2 style={{textAlign:'center',textShadow:'inherit'}}>LogIn</h2>
+          <br/>
+          <input style={{margin:'10px'}} onChange={handleChange} name="username" type="text" placeholder="ENTER YOUR NAME" />        
+          <input style={{margin:'10px'}} onChange={handleChange} name="password" type="password" placeholder="YOUR PASSWORD" />
+          <br/>
+          <Button style={{borderRadius:'25%',backgroundColor:'GrayText',marginLeft:'100px'}} type="submit">LogIn</Button>
+       
+      </form>
+    </>
+  )
+}

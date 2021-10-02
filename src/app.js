@@ -1,54 +1,40 @@
-import React, { useContext } from 'react';
-import SettingsContext from './context/context';
-import { LoginContext } from './context/loginContext';
-
-// for lab 32
-import Header from './components/header';
-import Footer from './components/footer.js';
-import FormSettingPage from './components/formSettingPage';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
-
-// for lab 33
-import LoginProvider from "./context/loginContext"
-import Auth from './components/auth';
+import React from 'react';
 import ToDo from './components/todo/todo.js';
-import { If, Else, Then } from "react-if";
-import Login from "./components/login";
+// import "./app.scss";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import  FormSettingPage  from"./components/formSettingPage";
+import Header from './components/header';
+import { When } from 'react-if';
+import { LoginContext } from './context/loginContext';
+import Login from './components/login';
 
 
 export default class App extends React.Component {
+// here using when condition to show or not our component depand on the user is login or not 
+  static contextType = LoginContext;
   render() {
     return (
 
-      <SettingsContext>
-        <LoginProvider>
-          <Login />
-          <Router>
-            <Header />
-            <Switch>
-              <Route exact path="/">
-              <Auth capability="read">
-                <ToDo />
-            </Auth >
-              </Route>
-              <Route exact path="/form">
-            <Header />
-            <FormSettingPage />
-            <Footer />
-            </Route>
-            </Switch>
-          </Router>
+      <Router >
+        <When condition =  {this.context.loggedIn} >
+        <Header/>
+        <Switch>
+          <Route exact path="/">
+             <ToDo />
+          </Route>
 
-         
-          
-        </LoginProvider>
-      </SettingsContext>
+          <Route exact path="/settings">
+             <FormSettingPage/>
+          </Route>
+        </Switch>
+        </When>
 
+        <When condition = {!this.context.loggedIn}>
+          <Login/>
+        </When>
+
+      </Router>
+       
     );
   }
 }
