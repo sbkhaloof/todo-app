@@ -15,7 +15,7 @@ PR:
 
 [PR-lab32](https://github.com/sbkhaloof/todo-app/pull/5)
 
-[PR-lab33]()
+[PR-lab33](https://github.com/sbkhaloof/todo-app/pull/8)
 
 Deployed link :
 
@@ -23,7 +23,7 @@ Deployed link :
 
 [sandbox2](https://74utw.csb.app/form)
 
-[sandbox3]()
+[sandbox3](https://3v4bw.csb.app/)
 
 for test issue 
 
